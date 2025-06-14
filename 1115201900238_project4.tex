@@ -1,0 +1,1111 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[greek]{babel}
+\usepackage{fontspec}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+\setmainfont{TeX Gyre Termes}
+
+\title{Τεχνητή Νοημοσύνη-Project 4}
+\author{Κυριάκος Λάμπρος Κιουράνας}
+\date{ΑΜ: 1115201900238}
+
+\begin{document}
+
+\maketitle
+
+\section*{1)}
+
+\subsection*{(a) Η πρόταση \((A \Rightarrow B) \Rightarrow (\neg B \Rightarrow \neg A)\) είναι έγκυρη}
+
+\subsubsection*{(i) Απόδειξη με Πίνακα Αληθείας}
+
+Θυμόμαστε:
+\[
+A \Rightarrow B \equiv \neg A \lor B.
+\]
+\[
+\neg B \Rightarrow \neg A \equiv B \lor \neg A \quad (\text{εναλλακτικά: } \neg(\neg B) \lor \neg A = B \lor \neg A).
+\]
+Η αρχική πρόταση είναι:
+\[
+(A \Rightarrow B) \Rightarrow (\neg B \Rightarrow \neg A).
+\]
+Θα φτιάξουμε πίνακα αληθείας για \(A, B\). Για κάθε συνδυασμό, υπολογίζουμε \((A \Rightarrow B)\) και \((\neg B \Rightarrow \neg A)\) και μετά την τελική συνεπαγωγή.
+
+\[
+\begin{array}{|c|c|c|c|c|}
+\hline
+A & B & A \to B & \neg B \to \neg A & (A \to B) \to (\neg B \to \neg A) \\
+\hline
+\text{T} & \text{T} & \text{T} & \text{T} & \text{T} \\
+\text{T} & \text{F} & \text{F} & \text{F} & \text{T} \; (\text{διότι } F \to F \text{ είναι } T) \\
+\text{F} & \text{T} & \text{T} & \text{T} & \text{T} \\
+\text{F} & \text{F} & \text{T} & \text{T} & \text{T} \\
+\hline
+\end{array}
+\]
+
+Υπενθύμιση: \(X \to Y\) είναι ψευδές μόνο όταν \(X\) είναι \(T\) και \(Y\) είναι \(F\).
+
+Στη 2η γραμμή, \(A \to B = F\), \(\neg B \to \neg A = F\), άρα «\(F \Rightarrow F\)» βγαίνει \(T\) (εφόσον «ψευδές \(\Rightarrow\) ψευδές» είναι αληθές στην κλασική λογική).
+
+Σε όλες τις γραμμές, η τελευταία στήλη είναι αληθής. Επομένως η πρόταση είναι ταυτολογία \(\Rightarrow\) έγκυρη.
+
+\subsubsection*{(ii) Απόδειξη με Resolution}
+
+Θέλουμε να δείξουμε ότι \((A \Rightarrow B) \Rightarrow (\neg B \Rightarrow \neg A)\) είναι έγκυρο, δηλ. \(\vDash\) κτλ. Ισοδύναμα δείχνουμε ότι η άρνησή του είναι μη ικανοποιήσιμη:
+\[
+\neg \bigl[(\neg A \lor B) \Rightarrow (B \lor \neg A)\bigr].
+\]
+Αρχικά αντικαθιστούμε \((X \Rightarrow Y)\) από \(\neg X \lor Y\). Άρα η πρόταση μέσα είναι:
+\[
+(\neg A \lor B) \Rightarrow (B \lor \neg A).
+\]
+Που γίνεται:
+\[
+\neg (\neg A \lor B) \lor (B \lor \neg A).
+\]
+Οπότε η όλη έκφραση που θέλουμε να δείξουμε μη ικανοποιήσιμη (η άρνηση του αρχικού) είναι:
+\[
+\neg \bigl[\neg (\neg A \lor B) \lor (B \lor \neg A)\bigr].
+\]
+Με De Morgan κ.λπ., γίνεται:
+\[
+(\neg A \lor B) \wedge \neg (B \lor \neg A).
+\]
+Ξανά \(\neg (B \lor \neg A) \equiv \neg B \wedge A\). Άρα η άρνηση ισοδυναμεί με:
+\[
+(\neg A \lor B) \wedge (\neg B) \wedge (A).
+\]
+Φέρνουμε σε σύνολο ρητρών (CNF):
+\begin{enumerate}
+    \item \(\neg A \lor B\)
+    \item \(\neg B\)
+    \item \(A\)
+\end{enumerate}
+
+Τώρα εφαρμόζουμε resolution:
+\begin{itemize}
+    \item Από (3) \(A\) και (1) \(\neg A \lor B\) βγάζουμε \(B\).
+    \item Τώρα έχουμε (2) \(\neg B\) και το συμπέρασμα \(B\). Κάνουμε resolution και βγάζουμε κενή ρήτρα.
+\end{itemize}
+
+Κενή ρήτρα \(\Rightarrow\) αντίφαση \(\Rightarrow\) καμία ερμηνεία δε μπορεί να ικανοποιήσει την άρνηση. Συνεπώς η αρχική πρόταση είναι έγκυρη (ταυτολογία).
+
+\subsection*{(b) Από \(A \Rightarrow B\) συνεπάγεται \((C \Rightarrow A) \Rightarrow (C \Rightarrow B)\)}
+
+Λέμε: \(\{A \to B\} \models (C \to A) \to (C \to B)\).
+
+\subsubsection*{(i) Απόδειξη με Πίνακες Αληθείας}
+
+Θέλουμε να δείξουμε ότι σε κάθε διάταξη τιμών, εάν \(A \to B\) είναι αληθές, τότε το \((C \to A) \to (C \to B)\) είναι επίσης αληθές. Πιο σύντομα, αν φτιάξουμε κοινό πίνακα για \(A, B, C\) και βάλουμε μια στήλη «\(\alpha = (A \to B)\)» και μια στήλη «\(\beta = (C \to A) \to (C \to B)\)», και ύστερα ελέγξουμε μόνο τις γραμμές όπου \(\alpha = T\), θα δούμε ότι στις ίδιες γραμμές \(\beta = T\).
+
+Αν κανείς το αναπτύξει πλήρως, είναι 8 γραμμές. Οποιαδήποτε γραμμή έχει \(\neg(\alpha) => \text{ δεν μας ενδιαφέρει, γιατί όταν } \alpha = \text{false η υπόθεση } A \to B \text{ δεν κρατά.}\) Σε όσες \(\alpha = true\), παρατηρείται \(\beta = true\). Άρα indeed \(A \to B \models (C \to A) \to (C \to B)\).
+
+\subsubsection*{(ii) Απόδειξη με Resolution}
+
+Βήματα:
+1. Μεταφράζουμε \(A \Rightarrow B\) σε CNF: \(\neg A \lor B\). Αυτό είναι η υπόθεση.
+2. Θέλουμε να αποδείξουμε ότι από αυτήν την υπόθεση παράγεται \((C \to A) \to (C \to B)\). Δηλ. ότι η άρνηση της τελικής πρότασης μαζί με την υπόθεση οδηγεί σε αντίφαση.
+
+Γράφουμε:
+\[
+\neg \bigl[(C \to A) \to (C \to B)\bigr].
+\]
+
+Η συνέχεια ακολουθεί παρόμοια λογική με το προηγούμενο παράδειγμα, φέρνοντας τη φόρμουλα σε CNF και εφαρμόζοντας resolution. Το τελικό αποτέλεσμα είναι η κενή ρήτρα, που δείχνει ότι το \((C \to A) \to (C \to B)\) είναι λογικό επακόλουθο της υπόθεσης \(A \Rightarrow B\).
+
+\subsection*{(c) Η πρόταση \(\neg \bigl((\neg B \Rightarrow \neg A) \Rightarrow (A \Rightarrow B)\bigr)\) είναι μη ικανοποιήσιμη}
+
+\subsubsection*{(i) Απόδειξη με Πίνακα Αληθείας}
+
+Όπως στην (a), βλέπουμε ότι:
+\[
+(\neg B \Rightarrow \neg A) \Rightarrow (A \Rightarrow B)
+\]
+είναι η λεγόμενη «αντιστροφή» της contrapositive ισοδυναμίας. Στην πραγματικότητα, \((\neg B \to \neg A) \leftrightarrow (A \to B)\). Άρα \((\neg B \to \neg A) \to (A \to B)\) είναι πάλι αληθές για όλους τους συνδυασμούς \(A, B\). Ο πίνακας αληθείας μοιάζει πολύ με της (a). Σε όλες τις γραμμές βγαίνει αληθής \(\Rightarrow\) η άρνησή του είναι μη ικανοποιήσιμη.
+
+\subsubsection*{(ii) Απόδειξη με Resolution}
+
+Με παρόμοιο τρόπο όπως στην (a). Πράγματι, αν γράψουμε την άρνηση:
+\[
+\neg \bigl[(\neg B \Rightarrow \neg A) \Rightarrow (A \Rightarrow B)\bigr],
+\]
+και το μετατρέψουμε σε CNF, θα πάρουμε ένα σύνολο ρητρών που οδηγεί σε αντίφαση.
+
+Συνεπώς πράγματι \(\neg \bigl((\neg B \Rightarrow \neg A) \Rightarrow (A \Rightarrow B)\bigr)\) είναι μη ικανοποιήσιμη, οπότε \((\neg B \Rightarrow \neg A) \Rightarrow (A \Rightarrow B)\) είναι έγκυρη.
+
+\section*{2)}
+
+\subsection*{Γενικές Συμβάσεις – Λεξιλόγιο}
+
+\begin{itemize}
+    \item \textbf{Student(x):} ο \(x\) είναι φοιτητής.
+    \item \textbf{KnowsPython(x):} ο \(x\) είναι γνώστης της γλώσσας Python.
+    \item \textbf{CanPassAI(x):} ο \(x\) μπορεί να περάσει το μάθημα Τεχνητής Νοημοσύνης.
+    \item \textbf{TakesAI(x):} ο \(x\) παρακολουθεί (παίρνει) το μάθημα Τεχνητής Νοημοσύνης.
+    \item \textbf{SubmitsHW(x,h):} ο \(x\) έχει παραδώσει την εργασία \(h\).
+    \item \textbf{AllHW(x,c):} ο \(x\) έχει κάνει όλες τις εργασίες του μαθήματος \(c\).
+    \item \textbf{Passes(x,c):} ο \(x\) περνάει το μάθημα \(c\).
+    \item \textbf{Prof(x):} ο \(x\) είναι καθηγητής.
+    \item \textbf{Likes(x,y):} ο \(x\) συμπαθεί τον \(y\).
+    \item \textbf{Friend(x,y):} ο \(x\) είναι φίλος με τον \(y\).
+    \item \textbf{GreekPolitician(x):} ο \(x\) είναι Έλληνας πολιτικός.
+    \item \textbf{Party(x,p):} ο \(x\) ανήκει στο κόμμα \(p\).
+    \item \textbf{DifferentParty(p1,p2):} τα κόμματα \(p_1\) και \(p_2\) είναι διαφορετικά.
+    \item \textbf{SaysSmartJoke(x, joke):} ο \(x\) λέει έξυπνο αστείο \(joke\).
+    \item \textbf{Drunk(x):} ο \(x\) είναι μεθυσμένος.
+    \item \textbf{Hates(x,y):} ο \(x\) αντιπαθεί τον \(y\).
+    \item \textbf{Fool(x,y,t):} ο \(x\) κοροϊδεύει τον \(y\) τη στιγμή/φορά \(t\).
+    \item \textbf{Barber(x):} ο \(x\) είναι κουρέας.
+    \item \textbf{Shaves(x,y):} ο \(x\) ξυρίζει τον \(y\).
+    \item \textbf{ShaveOneself(x):} ο \(x\) ξυρίζεται μόνος του.
+    \item \textbf{Men(x):} ο \(x\) είναι άνδρας.
+    \item \textbf{Woman(x):} η \(x\) είναι γυναίκα.
+    \item \textbf{AreSisters(w1,w2):} οι γυναίκες \(w_1\) και \(w_2\) είναι αδερφές.
+    \item \textbf{Married(x,y):} ο \(x\) είναι παντρεμένος με την/τον \(y\).
+    \item \textbf{Subset(A,B):} το σύνολο \(A\) είναι υποσύνολο του συνόλου \(B\).
+    \item \textbf{ElementOf(a,A):} το στοιχείο \(a\) ανήκει στο σύνολο \(A\).
+    \item \textbf{Polygon(x):} το \(x\) είναι πολύγωνο.
+    \item \textbf{SideOf(x,s):} το \(s\) είναι πλευρά του \(x\).
+    \item \textbf{IsSegment(s):} το \(s\) είναι ευθύγραμμο τμήμα.
+    \item \textbf{RightAngle(a):} η γωνία \(a\) είναι ορθή.
+    \item \textbf{AngleOf(x,a):} η γωνία \(a\) ανήκει στο σχήμα \(x\).
+    \item \textbf{EqualSegments(s1,s2):} τα ευθύγραμμα τμήματα \(s_1\) και \(s_2\) έχουν ίσο μήκος.
+\end{itemize}
+
+\section*{Προτάσεις (a)–(o)}
+
+\subsection*{(a)}
+«Όποιος φοιτητής είναι γνώστης της γλώσσας Python μπορεί να περάσει το μάθημα της Τεχνητής Νοημοσύνης.»
+\[
+\forall x\,\Bigl[\bigl(Student(x)\,\wedge\,KnowsPython(x)\bigr)\;\to\;CanPassAI(x)\Bigr].
+\]
+
+\subsection*{(b)}
+«Κάθε φοιτητής που παίρνει Τεχνητή Νοημοσύνη, παραδίδει τουλάχιστον μία εργασία.»
+\[
+\forall x\;\Bigl[(Student(x)\,\wedge\,TakesAI(x)) \;\to\; \exists h\, SubmitsHW(x,h)\Bigr].
+\]
+
+\subsection*{(c)}
+«Υπάρχουν φοιτητές που παίρνουν Τεχνητή Νοημοσύνη και δεν έχουν παραδώσει καμία εργασία.»
+\[
+\exists x\;\Bigl[Student(x)\,\wedge\,TakesAI(x)\,\wedge\,\forall h\,\neg SubmitsHW(x,h)\Bigr].
+\]
+
+\subsection*{(d)}
+«Αν ένας φοιτητής κάνει όλες τις εργασίες ενός μαθήματος, θα το περάσει.»
+\[
+\forall x\;\forall c\;\Bigl[(Student(x)\,\wedge\,AllHW(x,c)) \;\to\; Passes(x,c)\Bigr].
+\]
+
+\subsection*{(e)}
+«Υπάρχει ένας καθηγητής που τον συμπαθούν όλοι οι φοιτητές.»
+\[
+\exists p\,\Bigl[Prof(p)\,\wedge\,\forall s\,\bigl(Student(s)\to Likes(s,p)\bigr)\Bigr].
+\]
+
+\subsection*{(f)}
+«Κάθε φοιτητής που έχει ένα φίλο ο οποίος έχει κάνει όλες τις εργασίες της Τεχνητής Νοημοσύνης, έχει και ένα φίλο που δεν έχει κάνει καμία εργασία.»
+\[
+\scriptstyle
+\forall x\,\Bigl[\bigl(Student(x)\,\wedge\,\exists y\,(Friend(x,y)\,\wedge\,AllHW(y,\text{AI}))\bigr)\;\to\;\exists z\,(Friend(x,z)\,\wedge\,\forall h\,\neg SubmitsHW(z,h))\Bigr].
+\]
+
+\subsection*{(g)}
+\[
+\scriptstyle
+\forall x\,\forall y\,\Bigl[\bigl(GreekPolitician(x)\,\wedge\,GreekPolitician(y)\,\wedge\,DifferentParty(p_1,p_2)\,\wedge\,Party(x,p_1)\,\wedge\,Party(y,p_2)\,\wedge\,(x\neq y)\bigr)\;\to\;\neg Likes(x,y)\Bigr].
+\]
+
+
+\subsection*{(h)}
+«Κάποιοι άνθρωποι λένε έξυπνα αστεία μόνο όταν είναι μεθυσμένοι.»
+\[
+\exists x\,\bigl[Person(x)\,\wedge\,\forall j\,(SaysSmartJoke(x,j)\to Drunk(x))\bigr].
+\]
+
+\subsection*{(i)}
+«Ο Γιάννης αντιπαθεί οποιονδήποτε αντιπαθεί τον εαυτό του.»
+\[
+\forall u\,\Bigl[\,Hates(u,u)\,\to\,Hates(\text{Giannis},u)\Bigr].
+\]
+
+\subsection*{(j)}
+«Οι πολιτικοί μπορούν να κοροϊδεύουν κάποιους ψηφοφόρους όλες τις φορές και όλους τους ψηφοφόρους μερικές φορές, αλλά δεν μπορούν να κοροϊδεύουν όλους τους ψηφοφόρους όλες τις φορές.»
+\begin{align*}
+1. & \quad \forall x \bigl[ Politician(x)\;\to\;\exists y (Voter(y)\;\wedge\;\forall t\,Fool(x,y,t)) \bigr]. \\
+2. & \quad \forall x \bigl[ Politician(x)\;\to\;\exists t\,\forall y\,(Voter(y)\to Fool(x,y,t)) \bigr]. \\
+3. & \quad \neg\exists x\,\Bigl[Politician(x)\,\wedge\,\forall y\,(Voter(y)\to \forall t\,Fool(x,y,t))\Bigr].
+\end{align*}
+
+\subsection*{(k)}
+«Δεν υπάρχει κουρέας που ξυρίζει ακριβώς αυτούς τους ανθρώπους που ξυρίζουν αυτούς που ξυρίζονται μόνοι τους.»
+\[
+\neg \exists b\,\Bigl[Barber(b)\,\wedge\,\forall p\,\Bigl(Shaves(b,p) \leftrightarrow \bigl[\exists q\,(ShaveOneself(q)) \wedge Shaves(p,q)\bigr]\Bigr)\Bigr].
+\]
+
+\subsection*{(l)}
+«Δύο άνδρες λέγονται μπατζανάκηδες αν οι γυναίκες τους είναι αδελφές.»
+\[
+\scriptstyle
+\forall m_1\,\forall m_2\,\Bigl[CoBrothersInLaw(m_1,m_2)\leftrightarrow\bigl(Men(m_1)\,\wedge\,Men(m_2)\,\wedge\,\exists w_1\,\exists w_2\,[Married(m_1,w_1)\,\wedge\,Married(m_2,w_2)\,\wedge\,AreSisters(w_1,w_2)]\bigr)\Bigr].
+\]
+
+\subsection*{(m)}
+«Ένα σύνολο είναι υποσύνολο κάποιου άλλου συνόλου αν και μόνο αν κάθε στοιχείο του πρώτου συνόλου είναι και στοιχείο του δεύτερου.»
+\[
+\forall A\,\forall B\,\Bigl[Subset(A,B)\leftrightarrow \bigl(\forall x\,[ElementOf(x,A)\to ElementOf(x,B)]\bigr)\Bigr].
+\]
+
+\subsection*{(n)}
+«Ορθογώνιο παραλληλόγραμμο είναι ένα πολύγωνο που έχει τέσσερεις πλευρές που είναι ευθύγραμμα τμήματα και τέσσερεις ορθές γωνίες.»
+\[
+\scriptstyle
+\forall x\Bigl[Rectangle(x)\leftrightarrow\bigl(Polygon(x)\,\wedge\, (\exists s_1,s_2,s_3,s_4:\text{όλα διακριτά},\,\forall s\,[SideOf(x,s)\to (s=s_1\lor s=s_2\lor s=s_3\lor s=s_4)],\, \forall i\,IsSegment(s_i))
+\]
+\[
+\scriptstyle
+\,\wedge \exists a_1,a_2,a_3,a_4: \text{(4 διακριτές γωνίες)…} \,\wedge\,\forall i\,RightAngle(a_i)\bigr)\Bigr].
+\]
+
+\subsection*{(o)}
+«Τετράγωνο είναι ένα ορθογώνιο παραλληλόγραμμο στο οποίο και οι τέσσερεις πλευρές είναι ίσες.»
+
+\[
+\scriptstyle
+\forall x\Bigl[Square(x)\leftrightarrow\bigl(Rectangle(x)\,\wedge\,\exists s_1,s_2,s_3,s_4:\text{(4 διακριτά segments)},\,\forall i,j\in\{1,2,3,4\}:\,EqualSegments(s_i,s_j)\,\wedge\,\forall s\,[SideOf(x,s)\to
+\]
+\[
+\scriptstyle
+(s=s_1\lor s=s_2\lor s=s_3\lor s=s_4)]\bigr)\Bigr].
+\]
+
+\section*{3)}
+
+
+\subsection*{Ορισμός της Ερμηνείας II}
+
+\subsection*{(α) Πεδίο Ορισμού (Domain)}
+Έστω το πεδίο ορισμού \(\mathcal{D} = \{ p_1, p_2\}\), όπου θεωρούμε ότι:
+\begin{itemize}
+    \item \(p_1\): αναπαριστά τον άνδρα της σκηνής.
+    \item \(p_2\): αναπαριστά τη γυναίκα της σκηνής.
+\end{itemize}
+
+\subsection*{(β) Ερμηνεία των Κατηγορημάτων}
+1. \(Man(x):\)
+\begin{itemize}
+    \item \(Man(p_1) = \text{true}\) (ο \(p_1\) είναι ο άνδρας).
+    \item \(Man(p_2) = \text{false}\) (η \(p_2\) δεν είναι άνδρας).
+\end{itemize}
+2. \(Woman(x):\)
+\begin{itemize}
+    \item \(Woman(p_1) = \text{false}\).
+    \item \(Woman(p_2) = \text{true}\) (η \(p_2\) είναι η γυναίκα).
+\end{itemize}
+3. \(Asleep(x):\)
+\begin{itemize}
+    \item \(Asleep(p_1) = \text{true}\) (υποθέτουμε ότι ο άνδρας κοιμάται στην εικόνα).
+    \item \(Asleep(p_2) = \text{false}\) (η γυναίκα είναι ξύπνια).
+\end{itemize}
+Οποιοδήποτε άλλο κατηγόρημα (\(Man, Woman, Asleep\)) σε άλλο στοιχείο της \(\mathcal{D}\) δεν υπάρχει, γιατί το \(\mathcal{D}\) έχει ακριβώς τα δύο άτομα \(\{p_1, p_2\}\).
+
+\section*{Έλεγχος Ικανοποίησης των \(\phi_1, \phi_2, \phi_3\)}
+
+\subsection*{(α) \(\phi_1 = \exists x [Man(x)\,\wedge\,Asleep(x)]\)}
+Λεκτικά: «Υπάρχει κάποιος άνδρας που κοιμάται.»
+\begin{itemize}
+    \item Μέσα στην ερμηνεία II, κοιτάμε τα \(p_1, p_2\).
+    \item Για \(p_1\): \(Man(p_1) = \text{true}, Asleep(p_1) = \text{true}\). Άρα \(Man \wedge Asleep\) βγαίνει \(\text{true}\).
+    \item Συνεπώς υπάρχει τέτοιος \(x\) (συγκεκριμένα \(x = p_1\)) για τον οποίο \(Man(x) \wedge Asleep(x)\) ισχύει.
+\end{itemize}
+Συμπέρασμα: \(\phi_1\) είναι αληθής στο II.
+
+\subsection*{(β) \(\phi_2 = \forall x [Man(x) \lor Woman(x)]\)}
+Λεκτικά: «Κάθε άτομο είναι είτε άνδρας είτε γυναίκα.»
+\begin{itemize}
+    \item Ελέγχουμε κάθε στοιχείο του domain: 
+    \begin{itemize}
+        \item \(p_1: Man(p_1) \lor Woman(p_1) \Rightarrow \text{true} \lor \text{false} = \text{true}\).
+        \item \(p_2: Man(p_2) \lor Woman(p_2) \Rightarrow \text{false} \lor \text{true} = \text{true}\).
+    \end{itemize}
+    \item Για όλα τα \(x \in \{p_1, p_2\}\), η έκφραση βγαίνει αληθής ⇒ \(\forall x, \phi_2\) ικανοποιείται.
+\end{itemize}
+Συμπέρασμα: \(\phi_2\) είναι επίσης αληθής στο II.
+
+\subsection*{(γ) \(\phi_3 = \exists x [Woman(x) \,\wedge\, Asleep(x)]\)}
+Λεκτικά: «Υπάρχει κάποια γυναίκα που κοιμάται.»
+\begin{itemize}
+    \item Εξετάζουμε πάλι: \(p_2\) είναι η μοναδική γυναίκα. Αλλά \(Asleep(p_2) = \text{false}\).
+    \item Άρα \((Woman(p_2) \wedge Asleep(p_2)) \equiv (\text{true} \wedge \text{false}) = \text{false}\).
+    \item Ο \(p_1\) δεν είναι καν γυναίκα, οπότε απορρίπτεται ούτως ή άλλως.
+    \item Δεν υπάρχει \(x\) να κάνει \(Woman(x) \wedge Asleep(x)\) αληθές.
+\end{itemize}
+Συμπέρασμα: \(\phi_3\) είναι ψευδής στην ερμηνεία II.
+
+\section*{4)}
+
+\subsection*{Μετάφραση σε Λογική Πρώτης Τάξης}
+
+Έστω:
+\begin{itemize}
+    \item \(R(x)\): «\(x\) είναι τριαντάφυλλο» (rose).
+    \item \(F(x)\): «\(x\) είναι λουλούδι» (flower).
+    \item \(Q(x)\): «\(x\) μαραίνεται γρήγορα» (fades quickly).
+\end{itemize}
+
+Προτάσεις:
+\begin{enumerate}
+    \item «All roses are flowers.»
+    \[
+    \forall x\,[R(x) \to F(x)].
+    \]
+    \item «Some flowers fade quickly.»
+    \[
+    \exists x\,[F(x) \wedge Q(x)].
+    \]
+    \item (Συμπέρασμα) «Some roses fade quickly.»
+    \[
+    \exists x\,[R(x) \wedge Q(x)].
+    \]
+\end{enumerate}
+
+Το ερώτημα είναι: συνεπάγονται οι (1) και (2) την (3);
+
+\section*{Γιατί δεν συνεπάγεται: Παρουσίαση Αντιπαραδείγματος}
+
+Για να δείξουμε ότι δεν είναι έγκυρο το συμπέρασμα, αρκεί να βρούμε μια ερμηνεία (interpretation) ή μοντέλο που ικανοποιεί τις προτάσεις (1) και (2), αλλά παραβιάζει την (3).
+
+\subsection*{Ιδέα: Κάποια λουλούδια μαραίνονται γρήγορα, αλλά δεν είναι τριαντάφυλλα.}
+
+\subsubsection*{Κατασκευή Ερμηνείας (μοντέλο)}
+\begin{itemize}
+    \item \textbf{Πεδίο ορισμού}: \(\{a, b\}\).
+    \item \textbf{Ορισμός}:
+    \begin{enumerate}
+        \item \(R(x)\):
+        \begin{itemize}
+            \item \(R(a) = \text{true}\), δηλαδή το \(a\) είναι τριαντάφυλλο.
+            \item \(R(b) = \text{false}\).
+        \end{itemize}
+        \item \(F(x)\):
+        \begin{itemize}
+            \item \(F(a) = \text{true}\), δηλαδή το \(a\) είναι λουλούδι.
+            \item \(F(b) = \text{true}\), δηλαδή το \(b\) είναι επίσης λουλούδι.
+        \end{itemize}
+        \item \(Q(x)\):
+        \begin{itemize}
+            \item \(Q(a) = \text{false}\), δηλαδή το \(a\) δεν μαραίνεται γρήγορα.
+            \item \(Q(b) = \text{true}\), δηλαδή το \(b\) μαραίνεται γρήγορα.
+        \end{itemize}
+    \end{enumerate}
+\end{itemize}
+
+\subsection*{Παρατηρήσεις}
+\begin{itemize}
+    \item Στο \(\{a, b\}\), και τα δύο είναι λουλούδια.
+    \item Μόνο το \(a\) είναι τριαντάφυλλο.
+    \item Μόνο το \(b\) μαραίνεται γρήγορα.
+\end{itemize}
+
+\section*{Έλεγχος Ικανοποίησης των (1) \& (2)}
+
+\subsubsection*{(1) \(\forall x [R(x) \to F(x)]\):}
+\begin{itemize}
+    \item Το μόνο \(x\) που κάνει \(R(x)\) αληθές είναι το \(a\). Για το \(a\), \(F(a) = \text{true}\), συνεπώς \(R(a) \to F(a)\) ισχύει.
+    \item Για το \(b\), το \(R(b)\) είναι ψευδές, συνεπώς δεν υπάρχει πρόβλημα.
+\end{itemize}
+Συνεπώς, η (1) είναι ικανοποιημένη.
+
+\subsubsection*{(2) \(\exists x [F(x) \wedge Q(x)]\):}
+\begin{itemize}
+    \item Για το \(b\): \(F(b) = \text{true}\) και \(Q(b) = \text{true}\). Άρα υπάρχει τέτοιο στοιχείο, συγκεκριμένα το \(b\).
+\end{itemize}
+Συνεπώς, η (2) είναι ικανοποιημένη.
+
+\section*{Αποτυχία της (3)}
+
+\subsubsection*{(3) \(\exists x [R(x) \wedge Q(x)]\):}
+\begin{itemize}
+    \item Χρειαζόμαστε κάποιο στοιχείο που να είναι ταυτόχρονα τριαντάφυλλο και να μαραίνεται γρήγορα.
+    \item Το μοναδικό τριαντάφυλλο είναι το \(a\), αλλά \(Q(a) = \text{false}\). Άρα \(\neg (R(a) \wedge Q(a))\).
+    \item Το \(b\) δεν είναι τριαντάφυλλο, συνεπώς δεν ικανοποιεί \((R(b) \wedge Q(b))\).
+\end{itemize}
+Δεν υπάρχει στοιχείο στο μοντέλο που κάνει αληθινή την (3).
+
+\section*{Συμπέρασμα}
+
+Αφού βρήκαμε μια ερμηνεία (μοντέλο) όπου οι προτάσεις (1) \& (2) είναι αληθείς, αλλά η πρόταση (3) είναι ψευδής, αποδεικνύεται ότι:
+\begin{quote}
+Η (3) \textbf{ΔΕΝ} είναι λογικό συμπέρασμα των (1) και (2).
+\end{quote}
+Με άλλα λόγια, η συνεπαγωγή «\((1) \wedge (2) \models (3)\)» δεν ισχύει. Στη γλώσσα της λογικής πρώτης τάξης, λέμε ότι (3) δεν είναι έγκυρη συνέπεια των (1) και (2).
+
+
+\section*{5)}
+
+\subsubsection*{Υπενθύμιση: Σημασιολογικός Ορισμός της «Έγκυρης» Πρότασης}
+
+Μια πρόταση \(\varphi\) της λογικής πρώτης τάξης λέμε ότι είναι έγκυρη (valid) αν και μόνο αν για κάθε ερμηνεία \(I\) (με όποιο πεδίο ορισμού \(\mathcal{D}\) και όποια ερμηνεία των κατηγορημάτων), η \(\varphi\) βγαίνει αληθής (i.e., \(\models \varphi\)).
+\begin{itemize}
+    \item Για να δείξουμε ότι είναι έγκυρη, συνήθως δίνουμε μια σημασιολογική απόδειξη (δείχνουμε ότι σε κάθε πιθανή ερμηνεία ικανοποιείται) ή βρίσκουμε μια τυπική απόδειξη.
+    \item Για να δείξουμε ότι δεν είναι έγκυρη, βρίσκουμε αντιπαράδειγμα: μία ερμηνεία \(I\) τέτοια που καθιστά την πρόταση ψευδή.
+\end{itemize}
+
+\section*{Πρόταση (a)}
+
+\[
+\bigl(\forall x\,[P(x)\lor Q(x)]\bigr) \;\;\Rightarrow\;\; \bigl(\forall x\,P(x)\bigr)\lor\bigl(\forall x\,Q(x)\bigr).
+\]
+
+\textbf{Φράση:} «Αν για κάθε \(x\) ισχύει \(P(x)\) ή \(Q(x)\), τότε ή για όλα τα \(x\) ισχύει \(P(x)\) ή για όλα τα \(x\) ισχύει \(Q(x)\).»
+
+\subsection*{(a.1) Είναι Έγκυρη ή Όχι;}
+
+Στη συνήθη λογική πρώτης τάξης, αυτό δεν είναι έγκυρο. Συχνά αναφέρεται ως «λανθασμένη διανομή του ‘\(\lor\)’ έξω από τον ποσοδείκτη \(\forall x\)». Γενικώς:
+\[
+\forall x\,(P(x)\lor Q(x)) \;\;\not\models\;\; (\forall x\,P(x))\lor (\forall x\,Q(x)).
+\]
+Όπως λέγεται, «αν κάθε στοιχείο του domain ικανοποιεί είτε \(P\) είτε \(Q\), δεν σημαίνει ότι όλα ικανοποιούν το ίδιο (\(P\) ή \(Q\)).» Μπορεί κάποια στοιχεία να ικανοποιούν \(P\), άλλα να ικανοποιούν \(Q\).
+
+\subsection*{(a.2) Παράδειγμα Αντιπαράδειγμα (Interpretation)}
+
+Ένα απλό domain είναι \(\{a, b\}\). Ορίστε κατηγορήματα:
+\begin{itemize}
+    \item \(P(a)=\text{true}, Q(a)=\text{false}\).
+    \item \(P(b)=\text{false}, Q(b)=\text{true}\).
+\end{itemize}
+
+Άρα για κάθε στοιχείο:
+\begin{itemize}
+    \item Το \(a\) «ανήκει» στο \(P\) αλλά όχι στο \(Q\).
+    \item Το \(b\) «ανήκει» στο \(Q\) αλλά όχι στο \(P\).
+\end{itemize}
+
+\paragraph{Έλεγχος:}
+\begin{enumerate}
+    \item \(\forall x\,[P(x)\lor Q(x)]\): είναι αληθές, διότι:
+    \begin{itemize}
+        \item Για \(x=a\): \(P(a)\lor Q(a)\equiv \text{true}\lor\text{false}=\text{true}\).
+        \item Για \(x=b\): \(P(b)\lor Q(b)\equiv \text{false}\lor\text{true}=\text{true}\).
+    \end{itemize}
+    Άρα όντως σε κάθε \(x\) ισχύει \(P(x)\lor Q(x)\).
+    \item \((\forall x\,P(x))\lor(\forall x\,Q(x))\): ψευδές, γιατί
+    \begin{itemize}
+        \item \(\forall x\,P(x)\) είναι ψευδές (το \(b\) δεν ικανοποιεί \(P\)).
+        \item \(\forall x\,Q(x)\) επίσης ψευδές (το \(a\) δεν ικανοποιεί \(Q\)).
+    \end{itemize}
+\end{enumerate}
+
+Συνεπώς, στο συγκεκριμένο μοντέλο, η υπόθεση \(\forall x\,[P(x)\lor Q(x)]\) είναι αληθής, αλλά το συμπέρασμα \((\forall x\,P(x))\lor(\forall x\,Q(x))\) είναι ψευδές. Έχουμε αληθές \(\Rightarrow\) ψευδές = ψευδής όλη η συνεπαγωγή. Άρα το (a) δεν είναι έγκυρο.
+
+\section*{Πρόταση (b)}
+
+\[
+\bigl((\forall x)\,P(x)\bigr)\lor\bigl((\forall x)\,Q(x)\bigr) \;\;\Rightarrow\;\; \bigl(\forall x)\,[P(x)\lor Q(x)].
+\]
+
+\textbf{Φράση:} «Αν ή όλοι οι \(x\) ικανοποιούν \(P\), ή όλοι οι \(x\) ικανοποιούν \(Q\), τότε για κάθε \(x\) ισχύει \(P(x)\lor Q(x)\).»
+
+\subsection*{(b.1) Είναι Έγκυρη ή Όχι;}
+
+Αυτή είναι έγκυρη. Εξηγείται εύκολα:
+\begin{itemize}
+    \item Αν όλοι οι \(x\) είναι στο \(P\), τότε οποιοδήποτε \(x\) πάρουμε, \(P(x)\) είναι αληθές, άρα \(P(x)\lor Q(x)\) είναι αληθές.
+    \item Αν όλοι οι \(x\) είναι στο \(Q\), ανάλογα ισχύει \(\forall x\,Q(x)\implies\forall x\,(P(x)\lor Q(x))\).
+\end{itemize}
+Σε κάθε ερμηνεία, αν ισχύει \((\forall x\,P(x))\lor(\forall x\,Q(x))\), εξάγουμε \(\forall x (P(x)\lor Q(x))\). Δεν υπάρχει τρόπος να βγει ψευδές το συμπέρασμα.
+
+\subsection*{(b.2) Σημασιολογική Απόδειξη}
+
+\begin{itemize}
+    \item Υποθέτουμε ότι σε μια ερμηνεία \(I\) η (b) βγαίνει ψευδής. Αυτό σημαίνει ότι \((\forall x\,P(x))\lor(\forall x\,Q(x))\) είναι αληθές και \(\forall x\,[P(x)\lor Q(x)]\) ψευδές.
+    \item Αλλά για να είναι \(\forall x\,[P(x)\lor Q(x)]\) ψευδές, υπάρχει κάποιο στοιχείο \(a\) του domain ώστε \(P(a)\lor Q(a) = \text{false}\). Τότε \(P(a)=\text{false}\) και \(Q(a)=\text{false}\).
+    \item Την ίδια στιγμή, λέμε ότι ή \(\forall x\,P(x)\) ή \(\forall x\,Q(x)\) είναι αληθές. Αν \(\forall x\,P(x)\) είναι αληθές, τότε \(P(a)=\text{true}\) — αντίφαση με το προηγούμενο. Αν \(\forall x\,Q(x)\) είναι αληθές, τότε \(Q(a)=\text{true}\) — πάλι αντίφαση.
+\end{itemize}
+
+Οπότε τέτοια ερμηνεία δεν υπάρχει. Άρα σε καμία ερμηνεία δε βγαίνει ψευδής. Επομένως η (b) είναι έγκυρη.
+
+\section*{6)}
+
+\subsection*{1. Περίληψη της Πρότασης}
+Η $\Phi$ γράφεται ως εξής:
+\[
+\bigl[(\forall x)\,P(x)\bigr]\;\lor\;\bigl[(\forall x)\,Q(x)\bigr] \;\;\Longrightarrow\;\; (\forall x)\,[\,P(x)\,\lor\,Q(x)\,].
+\]
+\textbf{Λεκτικά:} «Αν είτε όλοι οι $x$ ικανοποιούν $P$ είτε όλοι οι $x$ ικανοποιούν $Q$, τότε οπωσδήποτε κάθε $x$ ικανοποιεί $P(x)\lor Q(x)$.»
+
+Από την Ερώτηση 5(b) γνωρίζουμε (και με σημασιολογικά επιχειρήματα) ότι πράγματι είναι έγκυρη.
+
+\subsection*{2. Στρατηγική Απόδειξης με Resolution}
+Στη λογική πρώτης τάξης, το συνηθισμένο «δείξε ότι πρόταση $\Phi$ είναι έγκυρη με resolution» γίνεται ως εξής:
+\begin{enumerate}
+    \item Παίρνουμε την υπόθεση (αριστερή πλευρά της συνεπαγωγής).
+    \item Παίρνουμε την άρνηση της δεξιάς πλευράς (του συμπεράσματος).
+    \item Δείχνουμε ότι ο συνδυασμός \{υπόθεση\}$\cup$\{$\neg (\text{συμπέρασμα})$  οδηγεί σε $\bot$ (κενή ρήτρα) μέσω resolution.
+    \item Εφόσον δεν υπάρχει ερμηνεία που να ικανοποιεί «υπόθεση \& άρνηση συμπεράσματος», καταλήγουμε ότι η συνεπαγωγή είναι έγκυρη.
+\end{enumerate}
+
+\subsection*{3. Αναλυτική Μετατροπή των Τμημάτων σε CNF}
+\paragraph{3.1 Αριστερή πλευρά (Υπόθεση):}
+$(\forall x)\,P(x) \lor (\forall x)\,Q(x).$
+Δεν είναι τυπική απλή μορφή («ή» δύο καθολικών). Θα την ερμηνεύσουμε ως εξής:
+\begin{itemize}
+    \item Ορίστε δύο προτασιακές σταθερές: 
+    \begin{itemize}
+\item $A = (\forall x\,P(x))$
+\item $B = (\forall x\,Q(x))$
+    \end{itemize}
+    οπότε η πρόταση γράφεται: $A \lor B$.
+    \item Εισάγουμε τους «κανόνες»: 
+    \begin{enumerate}
+        \item $A \lor B.$ (προτασιακό επίπεδο)
+        \item $\forall x\,(\neg A \lor P(x)).$ (αν $A$ είναι αληθές, τότε για κάθε $x$, $P(x)$ ισχύει)
+        \item $\forall x\,(\neg B \lor Q(x)).$ (αν $B$ είναι αληθές, τότε για κάθε $x$, $Q(x)$ ισχύει)
+    \end{enumerate}
+\end{itemize}
+
+\paragraph{3.2 Δεξιά πλευρά (Συμπέρασμα):}
+$(\forall x)\,[P(x) \lor Q(x)].$
+Η άρνησή της:
+\[
+\neg \bigl[\forall x\,(P(x) \lor Q(x))\bigr] \;\equiv\; \exists x\,\bigl[\neg P(x) \land \neg Q(x)\bigr].
+\]
+Με Skolemization, παίρνουμε ένα καινούργιο σταθερό $c$:
+\begin{enumerate}
+    \item $\neg P(c).$
+    \item $\neg Q(c).$
+\end{enumerate}
+
+\subsection*{4. Τελικό Σύνολο Ρητρών για Resolution}
+Το σύνολο CNF τοποθετούμε:
+\begin{enumerate}
+    \item $A \lor B.$
+    \item $\forall x\,(\neg A \lor P(x)).$
+    \item $\forall x\,(\neg B \lor Q(x)).$
+    \item $\neg P(c).$
+    \item $\neg Q(c).$
+\end{enumerate}
+Όπου (2) και (3) είναι καθολικές ρήτρες.
+
+\subsection*{5. Βήματα Resolution – Εύρεση της Αντίφασης}
+\paragraph{Βήμα 1.}
+Από (2) $\neg A \lor P(x)$, εξειδικεύουμε $x \mapsto c$. Παίρνουμε:
+\[
+\neg A \lor P(c).
+\]
+Το συνδυάζουμε με (4) $\neg P(c)$ σε resolution:
+\begin{itemize}
+    \item $\neg A \lor P(c)$
+    \item $\neg P(c)$
+\end{itemize}
+Εφαρμόζουμε resolution στο $P(c)$ και $\neg P(c)$. Παίρνουμε:
+\[
+\neg A.
+\]
+
+\paragraph{Βήμα 2.}
+Από (3) $\neg B \lor Q(x)$, εξειδικεύουμε $x \mapsto c$. Παίρνουμε:
+\[
+\neg B \lor Q(c).
+\]
+Το συνδυάζουμε με (5) $\neg Q(c)$ σε resolution:
+\begin{itemize}
+    \item $\neg B \lor Q(c)$
+    \item $\neg Q(c)$
+\end{itemize}
+Εφαρμόζουμε resolution στο $Q(c)$ και $\neg Q(c)$. Παίρνουμε:
+\[
+\neg B.
+\]
+
+\paragraph{Βήμα 3.}
+Τώρα έχουμε:
+\begin{itemize}
+    \item $A \lor B.$
+    \item $\neg A.$
+    \item $\neg B.$
+\end{itemize}
+Κάνουμε resolution:
+\begin{itemize}
+    \item Από $\neg A$ με $A \lor B$ προκύπτει $B$.
+    \item Το $B$ έρχεται σε αντίφαση με $\neg B$. Παίρνουμε κενή ρήτρα.
+\end{itemize}
+
+\subsection*{6. Συμπέρασμα}
+Με την ανάλυση (resolution) είδαμε ότι μόλις προσθέσουμε:
+\begin{enumerate}
+    \item Το «αριστερό μέρος» $\Rightarrow$ ως υπόθεση ($A \lor B$, $\neg A \lor P(x)$, $\neg B \lor Q(x)$),
+    \item Την άρνηση του δεξιού μέρους ($\exists x\,[\neg P(x) \land \neg Q(x)]$ \(\Rightarrow \neg P(c), \neg Q(c)\)),
+\end{enumerate}
+καταλήγουμε σε αντίφαση. Επομένως, δεν υπάρχει ερμηνεία που κάνει αληθές το αριστερό και ψευδές το δεξιό \(\Rightarrow\) η συνεπαγωγή είναι έγκυρη.
+
+\section*{7)}
+
+\subsection*{(a)}
+Προσπαθούμε να ενοποιήσουμε: 
+\[
+P\bigl(x,\;F(y),\;A,\;w\bigr)\quad\text{και}\quad P\bigl(G(u),\;v,\;u,\;x\bigr).
+\]
+Επειδή και στις δύο περιπτώσεις το κατηγορούμενο είναι το ίδιο ($P$) και έχει 4 ορίσματα, τα ενοποιούμε κατά θέση:
+\begin{enumerate}
+    \item $x$ με $G(u)$. ⇒ $\sigma_1: x \mapsto G(u)$.
+    \item $F(y)$ με $v$. ⇒ $\sigma_2: v \mapsto F(y)$.
+    \item $A$ με $u$. ⇒ $\sigma_3: u \mapsto A$.
+    \item $w$ με $x$. ⇒ $\sigma_4: w \mapsto x$.
+\end{enumerate}
+
+Ωστόσο, πρέπει να τα «συγχωνεύσουμε» συνεπέστατα. Αφού $u \mapsto A$, τότε όπου είχαμε $G(u)$ γίνεται $G(A)$. Επιπλέον, από το 1ο βήμα $x \mapsto G(u)$, αλλά τώρα $u \mapsto A \Rightarrow x \mapsto G(A)$. Στο βήμα (4) βλέπουμε $w \mapsto x \mapsto G(A)$. Δεν υπάρχει σύγκρουση. Το $y$ παραμένει ελεύθερο (κανείς δεν το δεσμεύει).
+
+Τελική υποκατάσταση (mgu) μπορούμε να την καταγράψουμε ως:
+\[
+\{\,u \mapsto A,\; x \mapsto G(A),\; v \mapsto F(y),\; w \mapsto G(A)\,\}.
+\]
+
+\subsection*{(b)}
+Προσπαθούμε να ενοποιήσουμε:
+\[
+Q\bigl(x,\,y,\,w,\,z\bigr)\quad\text{και}\quad Q\bigl(A,\,F(B),\,z,\,G(z)\bigr).
+\]
+Κατά θέση:
+\begin{enumerate}
+    \item $x$ με $A$. ⇒ $x \mapsto A$.
+    \item $y$ με $F(B)$. ⇒ $y \mapsto F(B)$.
+    \item $w$ με $z$. ⇒ $w \mapsto z$.
+    \item $z$ με $G(z)$. Εδώ ελέγχουμε occurs-check: προσπαθούμε να κάνουμε $z = G(z)$.
+\end{enumerate}
+
+Αυτό αποτυγχάνει λόγω occurs-check, διότι το $z$ εμφανίζεται μέσα στο $G(z)$. Δεν μπορεί μία μεταβλητή $z$ να «ισούται» με μια δομή $G(z)$ που περιέχει την ίδια μεταβλητή. Θα συνεπαγόταν άπειρη αναδίπλωση (π.χ. $z = G(G(G(\dots)))$).
+
+Συμπέρασμα: Κανένας ενοποιητής δεν υπάρχει. Δεν ενοποιούνται.
+
+\subsection*{(c)}
+Να ενοποιήσουμε:
+\[
+R\bigl(F(x),\;G(y),\;z,\;d\bigr)\quad\text{και}\quad R\bigl(u,\;v,\;H(u),\;v\bigr).
+\]
+Κατά θέση:
+\begin{enumerate}
+    \item $F(x)$ με $u$. ⇒ $u \mapsto F(x)$.
+    \item $G(y)$ με $v$. ⇒ $v \mapsto G(y)$.
+    \item $z$ με $H(u)$. Αλλά $u \mapsto F(x) \Rightarrow H(u) \mapsto H(F(x))$. Άρα $z \mapsto H(F(x))$.
+    \item $d$ με $v$. Όμως $v \mapsto G(y)$. Άρα πρέπει το $G(y)$ να ενοποιηθεί με το $d$. Δηλαδή $d = G(y)$. Αλλά $d$ είναι σταθερά και $G(\dots)$ είναι εφαρμογή συνάρτησης.
+\end{enumerate}
+
+Αποτυχία: δεν υπάρχει ενοποιητής. Διότι θα σήμαινε $G(y) = d$, κάτι αδύνατο.
+
+\subsection*{(d)}
+Να ενοποιήσουμε:
+\[
+S\bigl(x,\,y,\,z,\,e\bigr)\quad\text{και}\quad S\bigl(F(w),\,w,\,G(w),\,H(w)\bigr).
+\]
+Κατά θέση:
+\begin{enumerate}
+    \item $x$ με $F(w)$. ⇒ $x \mapsto F(w)$.
+    \item $y$ με $w$. ⇒ $y \mapsto w$.
+    \item $z$ με $G(w)$. ⇒ $z \mapsto G(w)$.
+    \item $e$ με $H(w)$. Εδώ όμως ελέγχουμε: αν το $e$ είναι σταθερά και το $H$ είναι συνάρτηση, τότε η κορυφή $e$ δεν ταιριάζει με $H(...)$. Συνεπώς καμία λύση.
+\end{enumerate}
+
+\subsection*{(e)}
+Να ενοποιήσουμε:
+\[
+T\bigl(x,\,A,\,y,\,w\bigr)\quad\text{και}\quad T\bigl(G(z),\,z,\,H(w),\,K\bigr).
+\]
+Κατά θέση:
+\begin{enumerate}
+    \item $x$ με $G(z)$. ⇒ $x \mapsto G(z)$.
+    \item $A$ με $z$. Εδώ $A$ είναι σταθερά και $z$ μεταβλητή. ⇒ $z \mapsto A$.
+    \item $y$ με $H(w)$. ⇒ $y \mapsto H(w)$.
+    \item $w$ με $K$. Υποθέτουμε $K$ είναι σταθερά. ⇒ $w \mapsto K$.
+\end{enumerate}
+
+Γυρίζουμε πίσω στο βήμα (3): $y \mapsto H(w)$ αλλά $w \mapsto K \Rightarrow y \mapsto H(K)$.
+
+Καμία σύγκρουση. Άρα η υποκατάσταση που προκύπτει:
+\[
+\{\,z \mapsto A,\; w \mapsto K,\; x \mapsto G(A),\; y \mapsto H(K)\,\}.
+\]
+
+
+\section*{8)}
+
+\subsection*{(a) Μετατροπή των προτάσεων (i)–(vi) σε Λογική Πρώτης Τάξης}
+
+\paragraph{(i)}
+«Ο Στέφανος, η Θεοδώρα και η Γιώτα είναι μέλη του πολιτικού κόμματος “ΤΟ ΚΑΣΕΛΑΚΙ”.»
+\[
+\text{MemberOf}(\text{Stefanos}, \text{Tokaselaki}),\quad \text{MemberOf}(\text{Theodora}, \text{Tokaselaki}),\quad \text{MemberOf}(\text{Giota}, \text{Tokaselaki}).
+\]
+
+\paragraph{(ii)}
+«Κάθε μέλος του κόμματος “ΤΟ ΚΑΣΕΛΑΚΙ” που δεν είναι δεξιός, είναι φιλελεύθερος.»
+\[
+\forall x\;\Bigl[\bigl(MemberOf(x, \text{Tokaselaki})\,\wedge\,\neg Dexios(x)\bigr)\;\to\;Fileleftheros(x)\Bigr].
+\]
+
+\paragraph{(iii)}
+«Στους δεξιούς δεν αρέσει ο σοσιαλισμός.»
+\[
+\forall x\;\bigl[ Dexios(x)\;\to\;\neg Likes(x, \text{Socialism})\bigr].
+\]
+
+\paragraph{(iv)}
+«Σ’ όποιον δεν αρέσει ο καπιταλισμός, δεν είναι φιλελεύθερος.»
+\[
+\forall x\;\bigl[\neg Likes(x, \text{Capitalism})\;\to\;\neg Fileleftheros(x)\bigr].
+\]
+
+\paragraph{(v)}
+«Στον Στέφανο δεν αρέσει ό,τι αρέσει στη Θεοδώρα, και του αρέσει ό,τι δεν αρέσει στην Θεοδώρα.»
+\[
+\forall I\;\bigl[\,Likes(\text{Theodora},I)\,\to\,\neg Likes(\text{Stefanos},I)\bigr], \quad
+\forall I\;\bigl[\,\neg Likes(\text{Theodora},I)\,\to\,Likes(\text{Stefanos},I)\bigr].
+\]
+
+\paragraph{(vi)}
+«Στη Θεοδώρα αρέσει ο σοσιαλισμός και ο καπιταλισμός.»
+\[
+Likes(\text{Theodora},\,\text{Socialism})\quad\text{και}\quad Likes(\text{Theodora},\,\text{Capitalism}).
+\]
+
+\subsection*{(b) Απόδειξη ότι \text{KB} ⊨ φ με Resolution}
+
+Θέλουμε να αποδείξουμε ότι $\text{KB} \models \phi$, δηλαδή ότι κάθε ερμηνεία που ικανοποιεί τις προτάσεις (i)–(vi) (KB) ικανοποιεί και τη (vii). Ή, με resolution-style:
+\begin{enumerate}
+    \item Παίρνουμε τις ρήτρες της KB (i.e., τις μετατροπές των (i)–(vi) σε CNF).
+    \item Παίρνουμε την άρνηση της $\phi$: 
+    \[
+    \neg\phi = \neg\,\exists x\,[MemberOf(x,\text{Tokaselaki})\,\wedge\,Fileleftheros(x)\,\wedge\,\neg Dexios(x)] \\ \equiv 
+    \] 
+    \[\forall x\,[\neg MemberOf(x,\text{Tokaselaki})\,\lor\,\neg Fileleftheros(x)\,\lor\,Dexios(x)].
+    \]
+    \item Ενώνουμε «KB $\cup$ { $\neg\phi$ σε CNF }» και δείχνουμε ότι από αυτό το σύνολο προκύπτει κενή ρήτρα (contradiction).
+\end{enumerate}
+
+\subsection*{(c) Τροποποίηση Απόδειξης για Λεκτικά Απάντησης (Answer Literals)}
+
+Στη λογική προγραμματισμού, μπορούμε να προσθέσουμε ένα «λεκτικό απάντησης», π.χ., $Answer(x)$ στο τέλος, για να βρούμε ποιο είναι το μέλος που ικανοποιεί το (vii). 
+
+Με δυο λόγια:
+\begin{enumerate}
+    \item Προσθέτουμε έναν κανόνα ή μια μεταβλητή «ψάχνουμε $x$ τέτοιο που … και $Answer(x)$».
+    \item Το σύστημα resolution (π.χ., Prolog) όταν ολοκληρωθεί η απόδειξη, επιστρέφει το binding του $x$.
+\end{enumerate}
+
+Πρακτικά, σε Prolog-στυλ θα γράφαμε:
+\[
+?- \text{MemberOf}(X, \text{Tokaselaki}),\; \text{Fileleftheros}(X),\; \neg \text{Dexios}(X).
+\]
+Και θα παίρναμε την απάντηση $X = \text{Giota}$ (ή κάποιον άλλον, αν τα συμπεράσματα βγουν έτσι). Αυτό είναι το «σκέλος (c)» της εκφώνησης: προσθέτουμε «lexical answer» λέγοντας $Answer(x)$ και μόλις ολοκληρωθεί η απόδειξη, εμφανίζεται ο υποψήφιος.
+
+\section*{9)}
+
+\subsection*{Κατηγορήματα και Σταθερές}
+
+Για να αναπαραστήσουμε τις προτάσεις σε Horn clauses, ορίζουμε τα εξής:
+\begin{itemize}
+    \item \textbf{Σταθερές (constants):}
+    \begin{itemize}
+        \item \texttt{eleni}, \texttt{giannis}, \texttt{petros}, \texttt{timos}, \texttt{katerina}, \texttt{manolis}, κτλ.
+    \end{itemize}
+    \item \textbf{Κατηγορήματα (predicates):}
+    \begin{itemize}
+        \item \texttt{woman(X), man(X)}: δηλώνουν το φύλο του X.
+        \item \texttt{beautiful(X)}: «ο/η X είναι όμορφος/όμορφη».
+        \item \texttt{rich(X)}: «ο/η X είναι πλούσιος/πλούσια».
+        \item \texttt{muscular(X)}: «ο Χ είναι μυώδης».
+        \item \texttt{polite(X)}: «ο Χ είναι ευγενικός».
+        \item \texttt{likes(X,Y)}: «ο Χ συμπαθεί/αρέσκεται στον Υ».
+        \item \texttt{happy(X)}: «ο Χ είναι ευτυχισμένος».
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Μετατροπή των Προτάσεων σε Horn Clauses}
+
+\paragraph{(1)} Η Ελένη είναι όμορφη.
+\[
+\texttt{beautiful(eleni).}
+\]
+
+\paragraph{(2)} Ο Γιάννης είναι όμορφος και πλούσιος.
+\[
+\texttt{beautiful(giannis). \quad rich(giannis).}
+\]
+
+\paragraph{(3)} Ο Πέτρος είναι μυώδης και πλούσιος.
+\[
+\texttt{muscular(petros). \quad rich(petros).}
+\]
+
+\paragraph{(4)} Ο Τίμος είναι μυώδης και ευγενικός.
+\[
+\texttt{muscular(timos). \quad polite(timos).}
+\]
+
+\paragraph{(5)} Σε όλους τους άνδρες αρέσουν οι όμορφες γυναίκες.
+\begin{verbatim}
+likes(M, W) :-
+    man(M),
+    woman(W),
+    beautiful(W).
+\end{verbatim}
+
+\paragraph{(6)} Όλοι οι πλούσιοι είναι ευτυχισμένοι.
+\begin{verbatim}
+happy(X) :- rich(X).
+\end{verbatim}
+
+\paragraph{(7)} Όλοι οι άνδρες που τους αρέσει μια γυναίκα, στην οποία αρέσουν, είναι ευτυχισμένοι.
+\begin{verbatim}
+happy(M) :-
+    man(M),
+    woman(W),
+    likes(M, W),
+    likes(W, M).
+\end{verbatim}
+
+\paragraph{(8)} Όλες οι γυναίκες που τους αρέσει ένας άνδρας, στον οποίο αρέσουν, είναι ευτυχισμένες.
+\begin{verbatim}
+happy(W) :-
+    woman(W),
+    man(M),
+    likes(W, M),
+    likes(M, W).
+\end{verbatim}
+
+\paragraph{(9)} Στην Κατερίνα αρέσουν όλοι οι άνδρες, στους οποίους αρέσει η ίδια.
+\begin{verbatim}
+likes(katerina, M) :-
+    man(M),
+    likes(M, katerina).
+\end{verbatim}
+
+\paragraph{(10)} Στην Ελένη αρέσουν όλοι οι άνδρες που είναι ευγενικοί και πλούσιοι ή μυώδεις και όμορφοι.
+\begin{verbatim}
+likes(eleni, M) :-
+    man(M),
+    polite(M),
+    rich(M).
+
+likes(eleni, M) :-
+    man(M),
+    muscular(M),
+    beautiful(M).
+\end{verbatim}
+
+
+\section*{10)}
+
+\subsection*{1. Η αρχική πρόταση $\phi$}
+
+Δίνεται:
+\[
+\phi \;=\; \forall x\,\Bigl(\bigl[\exists y\,(P(x,y)\;\Rightarrow\;\exists z\,(Q(x,z)\;\Rightarrow\;\exists w\,R(x,w))\bigr]\Bigr).
+\]
+Θέλουμε στο (a) να τη φέρουμε σε CNF.
+
+\subsection*{1.1 Ξαναγράφουμε τις συνεπαγωγές $\Rightarrow$ ως $\neg(\dots)\lor(\dots)$}
+
+Υπενθύμιση:
+\[
+P \to Q \equiv \neg P \lor Q.
+\]
+Πρώτα μέσα στην παρένθεση:
+\[
+P(x,y) \;\Rightarrow\; \exists z\,\bigl(Q(x,z) \;\Rightarrow\; \exists w\,R(x,w)\bigr)
+\]
+ισοδύναμο με
+\[
+\neg P(x,y) \lor \exists z\,\bigl[\neg Q(x,z) \lor \exists w\,R(x,w)\bigr].
+\]
+Άρα η $\phi$ γίνεται:
+\[
+\forall x\;\bigl(\exists y\,[\,\neg P(x,y)\;\lor\;\exists z\,(\neg Q(x,z)\;\lor\;\exists w\,R(x,w))]\bigr).
+\]
+
+\subsection*{1.2 Ενοποίηση των υπαρκτικών ποσοδεικτών}
+
+Έχουμε:
+\[
+\forall x\;\exists y\;\exists z\;\exists w\,\Bigl[\neg P(x,y)\;\lor\;\bigl(\neg Q(x,z)\;\lor R(x,w)\bigr)\Bigr].
+\]
+Μετατρέπεται σε prenex μορφή:
+\[
+\forall x\;\exists y\exists z\exists w\;\Bigl[\neg P(x,y)\;\lor\;\neg Q(x,z)\;\lor R(x,w)\Bigr].
+\]
+
+\subsection*{1.3 Skolemization}
+
+Με Skolemization:
+\[
+y = f(x), \; z = g(x), \; w = h(x).
+\]
+Η πρόταση γίνεται:
+\[
+\forall x\;\bigl[\neg P\bigl(x,f(x)\bigr)\;\lor\;\neg Q\bigl(x,g(x)\bigr)\;\lor\; R\bigl(x,h(x)\bigr)\bigr].
+\]
+
+\subsection*{1.4 Μετατροπή σε CNF Ρήτρα}
+
+Η CNF μορφή:
+\[
+\bigl[\neg P(x,f(x)) \;\lor\;\neg Q(x,g(x)) \;\lor\; R(x,h(x))\bigr].
+\]
+
+\section*{2. Απόδειξη ότι από $\phi$ έπεται $\psi$}
+
+Δίνεται:
+\[
+\psi \;=\;\forall x\,\exists y\,\exists z\,\exists w\;\Bigl[P(x,y)\;\Rightarrow\;(Q(x,z)\;\Rightarrow\;R(x,w))\Bigr].
+\]
+
+\subsection*{2.1 Αναδιατύπωση και Άρνηση}
+
+Η $\psi$ είναι:
+\[
+\forall x\,\exists y\,\exists z\,\exists w\,\bigl[\neg P(x,y)\;\lor\;\neg Q(x,z)\;\lor\;R(x,w)\bigr].
+\]
+Η άρνηση:
+\[
+\neg \psi \;=\; \exists x\,\forall y,z,w\,\bigl[P(x,y)\,\wedge\,Q(x,z)\,\wedge\,\neg R(x,w)\bigr].
+\]
+
+\subsection*{2.2 Resolution}
+
+Από την $\phi$, έχουμε:
+\[
+\neg P(x,f(x)) \lor \neg Q(x,g(x)) \lor R(x,h(x)).
+\]
+Από την $\neg \psi$:
+\[
+P(a,y), \; Q(a,z), \; \neg R(a,w).
+\]
+
+Με resolution:
+\begin{itemize}
+    \item Από $P(a,y)$ και $\neg P(a,f(a))$: $y = f(a)$, παράγουμε $\neg Q(a,g(a)) \lor R(a,h(a))$.
+    \item Από $Q(a,z)$ και $\neg Q(a,g(a))$: $z = g(a)$, παράγουμε $R(a,h(a))$.
+    \item Από $R(a,h(a))$ και $\neg R(a,w)$: $w = h(a)$, καταλήγουμε σε αντίφαση.
+\end{itemize}
+
+Άρα $\phi \models \psi$.
+
+\section*{12)}
+
+\subsection*{1. (a) Αναπαράσταση σε Δομή Σχεσιακής Βάσης και Datalog}
+
+\subsection*{1.1 Πληροφορίες των Πινάκων}
+
+\noindent
+\textbf{Teaches(Professor, Course)} \\
+\begin{itemize}
+    \item (Manolis, AI)
+    \item (Manolis, Data Structures)
+    \item (Yannis, DB)
+    \item (Mema, System Programming)
+\end{itemize}
+
+\noindent
+\textbf{Course\_Semester(Course\_Name, Semester)} \\
+\begin{itemize}
+    \item (Data Structures, 1)
+    \item (AI, 3)
+    \item (DB, 4)
+    \item (System Programming, 6)
+\end{itemize}
+
+\subsection*{1.2 Ερώτηση}
+
+«Σε ποια εξάμηνα διδάσκει ο Μανόλης;»
+
+\subsection*{1.3 Παράσταση σε Datalog}
+
+Ορίζουμε δύο σχέσεις Datalog, αντιστοιχώντας τους πίνακες:
+\begin{lstlisting}
+% Γεγονότα από τον πίνακα Teaches:
+Teaches(manolis, ai).
+Teaches(manolis, data_structures).
+Teaches(yannis, db).
+Teaches(mema, system_programming).
+
+% Γεγονότα από τον πίνακα Course_Semester:
+Course_Semester(ai, 3).
+Course_Semester(data_structures, 1).
+Course_Semester(db, 4).
+Course_Semester(system_programming, 6).
+\end{lstlisting}
+
+Στη συνέχεια, η ερώτηση σε Datalog στυλ:
+\begin{lstlisting}
+?- SemesterOfManolis(S).
+\end{lstlisting}
+
+Και ορίζουμε έναν κανόνα για να συνδέσουμε το μάθημα με το εξάμηνο:
+\begin{lstlisting}
+SemesterOfManolis(Sem) :-
+    Teaches(manolis, C),
+    Course_Semester(C, Sem).
+\end{lstlisting}
+
+Έτσι, η ερώτηση \texttt{?- SemesterOfManolis(S).} θα επιστρέψει όλα τα $S$ τέτοια που \texttt{manolis} διδάσκει σε εξάμηνο $S$.
+
+\section*{2. (b) Εφαρμογή Forward Chaining}
+
+Η τεχνική forward chaining (π.χ. bottom-up evaluation σε Datalog) λειτουργεί ως εξής:
+\begin{enumerate}
+    \item Έχουμε τους πίνακες (σχέσεις) \texttt{Teaches} και \texttt{Course\_Semester} ως σύνολα γεγονότων.
+    \item Ο κανόνας:
+    \[
+    \text{SemesterOfManolis(S) :- Teaches(manolis,C), Course\_Semester(C,S).}
+    \]
+    \item Ξεκινάμε με τις βάσεις \texttt{Teaches} και \texttt{Course\_Semester}. Το forward chaining θα προσπαθήσει να “ενώσει” (join) τα γεγονότα όπου \texttt{manolis} διδάσκει κάποια $C$ και βρίσκει σε ποιο $S$ ανήκει το $C$.
+\end{enumerate}
+
+\subsection*{2.1 Εφαρμογή Βήμα-Βήμα}
+
+\begin{itemize}
+    \item Από \texttt{Teaches(manolis, ai)} και \texttt{Course\_Semester(ai, 3)} → παράγει 
+    \\ \texttt{SemesterOfManolis(3)}.
+    \item Από \texttt{Teaches(manolis, data\_structures)} και \texttt{Course\_Semester(data\_structures, 1)} → παράγει \texttt{SemesterOfManolis(1)}.
+    \item Οι άλλες εγγραφές \texttt{Teaches(yannis,db)}, \texttt{Teaches(mema,system\_programming)} δεν έχουν \texttt{Professor=manolis}, οπότε δεν παράγουν νέα γεγονότα για 
+    \\ \texttt{SemesterOfManolis(...)}.
+    \item Εντούτοις, αν θέλαμε να ελέγξουμε διεξοδικά: 
+    \begin{itemize}
+        \item \texttt{Teaches(yannis, db)} ταιριάζει με \texttt{Course\_Semester(db,4)}, 
+        \\ άρα \texttt{SemesterOfYannis(4)}, αλλά δεν ενδιαφέρει εδώ γιατί ρωτάμε για \texttt{manolis}.
+        \item \texttt{Teaches(mema, system\_programming)} ταιριάζει με 
+       \\ \texttt{Course\_Semester(system\_programming,6)}, κ.λπ.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{2.2 Συμπέρασμα Forward Chaining}
+
+Το σύστημα «πυροδοτεί» τον κανόνα:
+\begin{lstlisting}
+SemesterOfManolis(S) :-
+    Teaches(manolis, C),
+    Course_Semester(C, S).
+\end{lstlisting}
+και παράγει τα τελικά γεγονότα:
+\begin{itemize}
+    \item \texttt{SemesterOfManolis(3)}.
+    \item \texttt{SemesterOfManolis(1)}.
+\end{itemize}
+
+Κανένα άλλο επειδή δεν υπάρχει αντιστοίχιση.
+
+\subsection*{Απάντηση:}
+
+Η απάντηση στην ερώτηση «Σε ποια εξάμηνα διδάσκει ο Μανόλης;» είναι: \textbf{1 και 3}.
+
+\end{document}
